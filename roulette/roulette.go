@@ -1,3 +1,6 @@
+/*
+Provides a roulette struct and the RollBall method
+*/
 package roulette
 
 import (
@@ -5,10 +8,12 @@ import (
 	"time"
 )
 
-/** Simple roulette, with two colours.
-	One constraint:
-	1) Same number cannot be both red and black (needs enforcing)
-**/
+/*
+Contains information for a simple two colour roulette.
+
+One constraint:
+1) Same number cannot be both red and black (needs enforcing)
+*/
 type Roulette struct {
 	BlackNumbers []int
 	RedNumbers   []int
