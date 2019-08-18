@@ -13,19 +13,19 @@ func main() {
 	}
 	fmt.Printf("roulette: \n%+v\n\n", r)
 
-	win1 := playBetOnSingleNumber(&r, 3, 13.50)
-	fmt.Printf("  result: %4.2f\n", win1)
-	win2 := playBetOnSingleNumber(&r, 3, 13.50)
-	fmt.Printf("  result: %4.2f\n", win2)
-	win3 := playBetOnSingleNumber(&r, 3, 13.50)
-	fmt.Printf("  result: %4.2f\n", win3)
+	playBetOnSingleNumber(&r, 3, 13.50)
+	playBetOnSingleNumber(&r, 3, 13.50)
+	playBetOnSingleNumber(&r, 3, 13.50)
+
+	playColourBet(&r, "red", 13.50)
+	playColourBet(&r, "red", 13.50)
+	playColourBet(&r, "black", 13.50)
 }
 
 // Returns customer's balance change; positive if win, negative if loss
 func playBetOnSingleNumber(r *roulette.Roulette, betNumber int, betAmount float64) (win float64) {
 	// roll the ball (don't need colour in this bet type, used only to print)
 	n, c := r.RollBall()
-	fmt.Printf("bet %4.2f on %d, got: %d %s,", betAmount, betNumber, n, c)
 
 	// winning conditions
 	if n == betNumber {
@@ -36,5 +36,20 @@ func playBetOnSingleNumber(r *roulette.Roulette, betNumber int, betAmount float6
 	} else {
 		win = -betAmount
 	}
+
+	fmt.Printf("bet %4.2f on %d, got: %d %s,  result: %4.2f\n", betAmount, betNumber, n, c, win)
+	return win
+}
+
+func playColourBet(r *roulette.Roulette, colour string, betAmount float64) (win float64) {
+	n, c := r.RollBall()
+
+	if colour == c {
+		win = betAmount * 2
+	} else {
+		win = -betAmount
+	}
+
+	fmt.Printf("bet %4.2f on %s, got: %d %s,  result: %4.2f\n", betAmount, colour, n, c, win)
 	return win
 }
