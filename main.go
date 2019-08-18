@@ -13,22 +13,26 @@ func main() {
 	}
 	fmt.Printf("roulette: \n%+v\n\n", r)
 
-	win := placeBetOnSingleNumber(&r, 3, 13.50)
-	fmt.Printf("I won %4.2f\n", win)
+	win1 := placeBetOnSingleNumber(&r, 3, 13.50)
+	fmt.Printf("  result: %4.2f\n", win1)
+	win2 := placeBetOnSingleNumber(&r, 3, 13.50)
+	fmt.Printf("  result: %4.2f\n", win2)
+	win3 := placeBetOnSingleNumber(&r, 3, 13.50)
+	fmt.Printf("  result: %4.2f\n", win3)
 }
 
 // Returns customer's balance change; positive if win, negative if loss
 func placeBetOnSingleNumber(r *roulette.Roulette, betNumber int, amount float64) (win float64) {
 	// roll the ball (don't need colour in this bet type, used only to print)
 	n, c := r.RollBall()
-	fmt.Printf("rolled, got: %d %s\n", n, c)
+	fmt.Printf("bet %4.2f on %d, got: %d %s,", amount, betNumber, n, c)
 
 	// winning conditions
 	if n == betNumber {
 		// winning calculation:
-		// multiplier here based on roulette and what casino decides
-		// standard: 35, if there are 37 betting options
-		win = amount * 2
+		// multiplier here based on roulette win chance and what casino decides
+		allNumbers := append(r.BlackNumbers, r.RedNumbers...)
+		win = amount * float64(len(allNumbers)-2)
 	} else {
 		win = -amount
 	}
