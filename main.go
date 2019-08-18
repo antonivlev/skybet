@@ -8,8 +8,8 @@ import (
 
 func main() {
 	r := roulette.Roulette{
-		Numbers: []int{1, 2, 3, 4},
-		Colours: []string{"red", "black", "red", "black"},
+		RedNumbers:   []int{1, 2, 3, 4},
+		BlackNumbers: []int{5, 6, 7, 8},
 	}
 	fmt.Printf("roulette: \n%+v\n\n", r)
 
