@@ -11,8 +11,9 @@ import (
 /*
 Contains information for a simple two colour roulette.
 
-One constraint:
-1) Same number cannot be both red and black (needs enforcing)
+TODO, constraints:
+1) Same number cannot be both red and black (make setters for the numbers)
+2) Can't be empty?
 */
 type Roulette struct {
 	BlackNumbers []int

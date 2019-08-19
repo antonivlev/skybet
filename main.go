@@ -23,6 +23,7 @@ func main() {
 }
 
 // Returns customer's balance change; positive if win, negative if loss
+// TODO: betNumber might not be in the roulette
 func playBetOnSingleNumber(r *roulette.Roulette, betNumber int, betAmount float64) (win float64) {
 	// roll the ball (don't need colour in this bet type, used only to print)
 	n, c := r.RollBall()
@@ -41,6 +42,8 @@ func playBetOnSingleNumber(r *roulette.Roulette, betNumber int, betAmount float6
 	return win
 }
 
+// Rolls ball and gets the bet amount
+// TODO: what if there is a colour mismatch, e.g. playColourBet(... "Red", ...) but roulette has "red"
 func playColourBet(r *roulette.Roulette, colour string, betAmount float64) (win float64) {
 	n, c := r.RollBall()
 
