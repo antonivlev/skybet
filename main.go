@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 
 	"github.com/antonivlev/skybet/roulette"
 )
@@ -13,13 +15,34 @@ func main() {
 	}
 	fmt.Printf("roulette: \n%+v\n\n", r)
 
-	playBetOnSingleNumber(&r, 3, 13.50)
-	playBetOnSingleNumber(&r, 3, 13.50)
-	playBetOnSingleNumber(&r, 3, 13.50)
+	// playBetOnSingleNumber(&r, 3, 13.50)
+	// playBetOnSingleNumber(&r, 3, 13.50)
+	// playBetOnSingleNumber(&r, 3, 13.50)
 
-	playColourBet(&r, "red", 13.50)
-	playColourBet(&r, "red", 13.50)
-	playColourBet(&r, "black", 13.50)
+	// playColourBet(&r, "red", 13.50)
+	// playColourBet(&r, "red", 13.50)
+	// playColourBet(&r, "black", 13.50)
+
+	http.HandleFunc("/", catchAll)
+	http.HandleFunc("/bet/single", handleBet)
+
+	// Serve
+	port := "8080"
+	log.Println("Serving on " + port + "...")
+	log.Fatal(http.ListenAndServe(":"+port, nil))
+}
+
+func catchAll(w http.ResponseWriter, r *http.Request) {
+	log.Println("all")
+	fmt.Fprintf(w, "Use GET /bet with some params")
+}
+
+func handleBet(w http.ResponseWriter, r *http.Request) {
+	log.Println("bet")
+	// TODO: not ideal, would need to parse parameters for each betting func
+	paramsMap := r.URL.Query()
+	fmt.Println(paramsMap)
+	fmt.Fprintf(w, "this is a bet")
 }
 
 // Returns customer's balance change; positive if win, negative if loss
