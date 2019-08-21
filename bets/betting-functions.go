@@ -4,6 +4,11 @@ They must all be of type BettingFunc:
 
 type BettingFunc func(*roulette.Roulette, BetArgs) (float64, int, string)
 
+TODO: for testing this package, would be nice to take each function in the package and:
+1) Make sure it's of the BettingFunc type
+2) Try running it with several different roulettes and BetArgs
+
+Pretty sure a script could be written to do this automatically, possibly using reflection
 */
 package bets
 
@@ -37,6 +42,7 @@ type BetArgs struct {
 	Colour string
 }
 
+// Plays bet on a single number, needs Money and Number
 // TODO: betNumber might not be in the roulette
 func PlayBetOnSingleNumber(r *roulette.Roulette, args BetArgs) (win float64, outNum int, outCol string) {
 	// unpack the args you need
@@ -58,6 +64,7 @@ func PlayBetOnSingleNumber(r *roulette.Roulette, args BetArgs) (win float64, out
 	return win, outNum, outCol
 }
 
+// Plays bet on a colour, needs Money and Colour
 // TODO: what if there is a colour mismatch, e.g. args.Colour = "redd", but roulette has "red"
 func PlayColourBet(r *roulette.Roulette, args BetArgs) (win float64, outNum int, outCol string) {
 	betAmount, betColour := args.Money, args.Colour

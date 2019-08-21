@@ -16,8 +16,10 @@ func main() {
 		RedNumbers:   []int{1, 2, 3, 4},
 		BlackNumbers: []int{5, 6, 7, 8},
 	}
-	fmt.Printf("roulette: \n%+v\n\n", rou)
+	fmt.Printf("configured roulette: \n%+v\n\n", rou)
 
+	// Register endpoints. Could create another roulette and register another set of
+	// endpoints for it.
 	http.HandleFunc("/", catchAll)
 	handleBet(&rou, "/betSingle", bets.PlayBetOnSingleNumber)
 	handleBet(&rou, "/betColour", bets.PlayColourBet)
@@ -28,15 +30,21 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
+// Handles unknown requests. Would be nice to include some instructions in its response,
+// for example listing all the endpoints, and their expected arguments
 func catchAll(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Use GET /betSingle or /betColour with some params")
+	fmt.Fprintf(w, "Use GET /betSingle or /betColour with some params. e.g:\n")
+	fmt.Fprintf(w, "\nhttp://localhost:8080/betSingle?money=12.45&number=2\n")
 }
 
+// Registers a betting func to an endpoint. Takes care of parsing args from request.
+// At the moment, parses args from URL, could be modified to accept a json payload.
 func handleBet(rou *roulette.Roulette, urlPath string, handler bets.BettingFunc) {
 	http.HandleFunc(urlPath, func(w http.ResponseWriter, r *http.Request) {
 		// put the bet params into a bets.BetArgs struct
 		var args bets.BetArgs
 		paramsMap := r.URL.Query()
+		// the gorilla library is used only here for parameter parsing
 		err := schema.NewDecoder().Decode(&args, paramsMap)
 		if err != nil {
 			fmt.Fprintf(w, err.Error())
