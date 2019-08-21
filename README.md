@@ -1,6 +1,6 @@
 # A simple roulette API
 
-To run:
+To run, clone to $HOME/go/src and:
 
 ```
 $ go get  
