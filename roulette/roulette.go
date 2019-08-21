@@ -1,5 +1,5 @@
 /*
-Provides a roulette struct and the RollBall method
+Provides a roulette and a method to play on it (RollBall)
 */
 package roulette
 

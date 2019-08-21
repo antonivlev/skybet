@@ -41,14 +41,20 @@ func handleBet(rou *roulette.Roulette, urlPath string, handler bets.BettingFunc)
 		if err != nil {
 			fmt.Fprintf(w, err.Error())
 			fmt.Fprintf(w, "\n-----------\n")
-			fmt.Fprintf(w, "Are you passing correctly named params? Will be decoded into:\n\n%#v", bets.BetArgs{})
+			fmt.Fprintf(w, "Are you passing correctly named and typed params? Will be decoded into:\n\n%#v", bets.BetArgs{})
 
 			fmt.Println("error:", err)
 			return
 		}
+		// TODO: should check here if the params are semantically ok, e.g. colour is contained in roulette
+		// or should this be done in the individual betting funcs? for example a colour bet func could
+		// tell you you shouldn't pass a number through
+
 		// if successful, play the bet with these args
-		win, msg := handler(rou, args)
-		fmt.Fprintf(w, "%s\n", msg)
-		fmt.Fprintf(w, "Balance change: %4.2f", win)
+		win, outNum, outCol := handler(rou, args)
+		// communicate result to user
+		fmt.Fprintf(w, urlPath+"\n\n")
+		fmt.Fprintf(w, "You bet %4.2f and got: %d %s\n", args.Money, outNum, outCol)
+		fmt.Fprintf(w, "Winnings: %4.2f\n", win)
 	})
 }

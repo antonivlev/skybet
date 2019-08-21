@@ -1,19 +1,33 @@
 /*
-This file contains functions for playing different bets.
-They must all take in a Roulette to play, and some parameters, e.g. bet amount,
-bet number and return the winnings
+This package contains functions for playing different bets.
+They must all be of type BettingFunc:
+
+type BettingFunc func(*roulette.Roulette, BetArgs) (float64, int, string)
+
 */
 package bets
 
 import (
-	"fmt"
-
 	"github.com/antonivlev/skybet/roulette"
 )
 
-type BettingFunc func(*roulette.Roulette, BetArgs) (float64, string)
+/*
+Generic betting func type. The type is needed to avoid having to parse
+parameters individually, as different betting funcs will have different
+signatures.
+*/
+type BettingFunc func(*roulette.Roulette, BetArgs) (float64, int, string)
 
-// Contains all possible arguments for all bets. Unpack in your betting function as needed.
+/*
+Contains all possible arguments for all bets. Whatever the frontend passes through will be
+decoded into this struct. Unpack in your betting function what you need.
+
+Example name mapping:
+	"iseven", "isEven", "IsEven" in URL would all map to an IsEven field in the struct
+
+NOTE: not ideal, groups all possible parameters for no other reason than to avoid individual
+parsing.
+*/
 type BetArgs struct {
 	// all bets have an amount of money bet on
 	Money float64
@@ -23,41 +37,37 @@ type BetArgs struct {
 	Colour string
 }
 
-// Returns customer's balance change; positive if win, negative if loss
 // TODO: betNumber might not be in the roulette
-func PlayBetOnSingleNumber(r *roulette.Roulette, args BetArgs) (win float64, msg string) {
+func PlayBetOnSingleNumber(r *roulette.Roulette, args BetArgs) (win float64, outNum int, outCol string) {
 	// unpack the args you need
 	betAmount, betNumber := args.Money, args.Number
 
-	// roll the ball (don't need colour in this bet type, used only for msg)
-	n, c := r.RollBall()
+	// roll the ball (don't need colour in this bet type, used only to pass back to user)
+	outNum, outCol = r.RollBall()
 
 	// winning conditions
-	if n == betNumber {
+	if outNum == betNumber {
 		// winning calculation:
 		// multiplier here based on roulette win chance and what casino decides
 		allNumbers := append(r.BlackNumbers, r.RedNumbers...)
 		win = betAmount * float64(len(allNumbers)-2)
 	} else {
-		win = -betAmount
+		win = 0.0
 	}
 
-	msg = fmt.Sprintf("bet %4.2f on %d:\ngot: %d %s\n", betAmount, betNumber, n, c)
-	return win, msg
+	return win, outNum, outCol
 }
 
-// Rolls ball and gets the bet amount
-// TODO: what if there is a colour mismatch, e.g. playColourBet(... "Red", ...) but roulette has "red"
-func PlayColourBet(r *roulette.Roulette, args BetArgs) (win float64, msg string) {
-	betAmount, colour := args.Money, args.Colour
-	n, c := r.RollBall()
+// TODO: what if there is a colour mismatch, e.g. args.Colour = "redd", but roulette has "red"
+func PlayColourBet(r *roulette.Roulette, args BetArgs) (win float64, outNum int, outCol string) {
+	betAmount, betColour := args.Money, args.Colour
+	outNum, outCol = r.RollBall()
 
-	if colour == c {
+	if betColour == outCol {
 		win = betAmount * 2
 	} else {
-		win = -betAmount
+		win = 0.0
 	}
 
-	msg = fmt.Sprintf("bet %4.2f on %s:\ngot: %d %s\n", betAmount, colour, n, c)
-	return win, msg
+	return win, outNum, outCol
 }
